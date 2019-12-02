@@ -1,0 +1,148 @@
+---
+title: "02_data_merging"
+author: "Anna Mikkelborg"
+date: "28/10/2019"
+output: html_document
+---
+
+```{r google data processing, warning =  FALSE}
+pacman::p_load(
+  dplyr,
+  tidyverse,
+  magrittr,
+  knitr
+)
+
+# load datasets processed in Python
+whm <- read.csv("~/Desktop/239T_materials/239T-final-project/whm.csv")
+weather <- read.csv("~/Desktop/239T_materials/239T-final-project/weather.csv")
+whm_weather <- read.csv("~/Desktop/239T_materials/239T-final-project/whmweather.csv")
+
+# merge datasets on region
+weathers <- inner_join(weather, whm_weather, by = "region")
+gdata <- inner_join(weathers, whm, by = "region")
+
+# eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
+cuts <- subset(gdata$region, gdata$weather == 100 | gdata$weather == 0 | gdata$white.history.month == 100 | gdata$white.history.month == 0)
+gdata_complete <- gdata %>%
+  filter(!(region %in% cuts))
+
+# create dataset of average scores for each region with complete data
+region_averages_complete <- gdata_complete %>%
+  group_by(region) %>%
+  summarise_at(vars(weather, white.history.month, weather....white.history.month.), funs(mean(., na.rm=TRUE)))
+
+# create dataset of average scores for all regions, including incompletes
+region_averages <- gdata %>%
+  group_by(region) %>%
+  summarise_at(vars(weather, weather....white.history.month.), funs(mean(., na.rm = TRUE)))
+
+# regress "white history month" average score on "weather" average score and "white history month + weather" average score for markets that never score a 0 or 100 on "white history month"
+whm_weather <- lm(white.history.month ~ weather, data = region_averages_complete)
+whm_whm_weather <- lm(white.history.month ~ weather....white.history.month., data = region_averages_complete)
+
+# use coefficients from regression to back out "white history month" for remaining markets, using their average search volume for "weather" and "white history month + weather"
+algorithm <- function(c, w) {
+  N <- whm_whm_weather$coefficients[2] * c - whm_weather$coefficients[2] * w
+  return(N)
+}
+
+region_averages$whm_estimate <- algorithm(region_averages$weather....white.history.month., region_averages$weather)
+
+# save dataset
+write.csv(region_averages, "~/Desktop/239T_materials/239T-final-project/region_averages.csv")
+```
+
+The 2016 CCES items I use are the following:
+* CC16_422c: "I am angry that racism exists." 1 strongly agree-5 strongly disagree
+* CC16_422d: "White people in the U.S. have certain advantages because of the color of their skin." 1 strongly agree-5 strongly disagree
+* CC16_422e: "I often find myself fearful of people of other races." 1 strongly agree-5 strongly disagree
+* CC16_422f: "Racial problems in the U.S. are rare, isolated situations." 1 strongly agree-5 strongly disagree
+```{r prepare CCES data, warning = FALSE}
+# load CCES dataset and assign to dataframe "cces"
+load("~/Desktop/239T_materials/239T-final-project/CCES16.RData")
+cces <- x
+
+# subset to variables of interest
+cces <- as.data.frame(cbind(cces$countyfips, cces$race, cces$CC16_422c, cces$CC16_422d, cces$CC16_422e, cces$CC16_422f))
+# label variables in subsetted data
+colnames(cces) <- c("countyfips", "race", "angry_racism_exists", "racial_advantages", "racial_fear", "racial_problems_isolated")
+# trim dataset to include only white respondents
+cces <- subset(cces, as.numeric(cces$race) == 1)
+# re-code countyfips variable from factor to numeric
+cces$countyfips <- as.numeric(as.character(cces$countyfips))
+
+# function to re-scale variables from 0 as most progressive to 1 as most conservative. takes a vector to re-scale and a logical value indicating whether scale should be reversed.
+rescale <- function(var, reverse) {
+  # re-scale from 1-5 to 0-1.
+  result <- (as.numeric(var) - 1) / 4
+  if (reverse == TRUE) {
+    result <- result * -1 + 1
+  }
+  return(result)
+}
+
+# re-scale racial attitudes
+cces %<>%
+  dplyr::mutate(
+    anger = rescale(angry_racism_exists, TRUE),
+    advantage = rescale(racial_advantages, FALSE),
+    fear = rescale(racial_fear, TRUE),
+    isolated = rescale(racial_problems_isolated, TRUE)
+  )
+
+#create racial conservatism score by averaging all measures
+cces %<>%
+  dplyr::mutate(racial_conservatism = rowMeans(select(., c(anger, advantage, fear, isolated
+  ))))
+```
+
+```{r merge CCES data with county fips data}
+# load county fips-DMA dataset and assign to dataframe "rosetta"
+load("~/Desktop/239T_materials/239T-final-project/county_dma.RData")
+rosetta <- x
+# re-code county fips variable by appending state fips as first two digits
+rosetta$countyfips <- rosetta$STATEFP*1000+rosetta$CNTYFP
+# trim spaces from DMA data
+rosetta$DMA <- trimws(rosetta$DMA)
+# remove duplicate rows from rosetta dataset
+rosetta <- subset(rosetta, rosetta$DMA != "HARRISONBURG" & rosetta$DMA != "NORFOLK-PORTSMTH-NEWPT NWS" & rosetta$DMA != "CHARLOTTESVILLE" & rosetta$DMA != "RICHMOND-PETERSBURG" & rosetta$DMA != "ROANOKE-LYNCHBURG" & rosetta$DMA != "WASHINGTON, DC(HAGRSTWN)")
+# merge rosetta and cces dataframes on "countyfips"
+cces <- merge(cces, rosetta, by = "countyfips")
+# create a dataset of averages by DMA.
+cces_dmas <- cces %>%
+  group_by(DMA) %>%
+  mutate(dmamean_anger = mean(anger, na.rm = TRUE), dmamean_advantage = mean(advantage, na.rm = TRUE), dmamean_fear = mean(fear, na.rm = TRUE), dmamean_isolated = mean(isolated, na.rm =TRUE), dmamean_rc = mean(racial_conservatism, na.rm = TRUE))
+cces_dmas <- select(cces_dmas, c(DMA, dmamean_anger, dmamean_advantage, dmamean_fear, dmamean_isolated, dmamean_rc))
+cces_dmas <- unique(cces_dmas)
+```
+
+Standardizing DMA spellings to merge on would be very complicated, but they appear in almost the same alphabetical order in both datasets. I will re-name the CCES data so that the DMAs are in the same alphabetical order as the Google data. Then I will create a new variable based on alphabetical order to merge on.
+```{r merge CCES data with Google data}
+# create new variable with consistent alphabetical order
+cces_dmas$dma_ord <- ifelse(cces_dmas$DMA == "COLUMBIA (MO) - JEFFERSON CITY (MO)", "COLUMBIA2", ifelse(cces_dmas$DMA == "COLUMBIA (SC)", "COLUMBIA1", ifelse(cces_dmas$DMA == "COLUMBUS (MS) - TUPELO(MS) - WEST POINT (MS)", "COLUMBUS3", ifelse(cces_dmas$DMA == "COLUMBUS (OH)", "COLUMBUS2", ifelse(cces_dmas$DMA == "PORTLAND (ME) - AUBURN (ME)", "PORTLAND2", ifelse(cces_dmas$DMA == "PORTLAND (OR)", "PORTLAND1", ifelse(cces_dmas$DMA == "SPRINGFIELD (MA) - HOLYOKE (MA)", "SPRINGFIELD2", ifelse(cces_dmas$DMA == "SPRINGFIELD (MO)", "SPRINGFIELD1", ifelse(cces_dmas$DMA == "WICHITA (KS) - HUTCHINSON (KS)", "WICHITA2", ifelse(cces_dmas$DMA == "WICHITA FALLS (TX) - LAWTON (OK)", "WICHITA1", cces_dmas$DMA))))))))))
+# rearrange cces_dmas in alphabetical order by DMA
+cces_dmas <- cces_dmas[order(cces_dmas$dma_ord),]
+# create alphabetical rank variable
+cces_dmas$alphabetical <- as.numeric(rownames(cces_dmas))
+# create vector of first three letters of each included DMA
+included <- toupper(substr(cces_dmas$DMA, 1, 3))
+
+# remove any DMAs not included in CCES dataset - TAKE FIRST 3 LETTERS AND CUT IF THEY DON'T MATCH
+region_averages$region_first3 <- toupper(substr(region_averages$region, 1, 3))
+region_averages <- subset(region_averages, region_averages$region_first3 %in% included)
+# rearrange region_averages in alphabetical order by DMA
+region_averages <- region_averages[order(region_averages$region),]
+# create alphabetical rank variable
+region_averages$alphabetical <- as.numeric(rownames(region_averages))
+
+# merge datasets on alphabetical variable
+cces_dmas_whm <- merge(cces_dmas, region_averages, by = "alphabetical")
+
+# write csv with final dataset
+write.csv(cces_dmas_whm, "~/Desktop/239T_materials/239T-final-project/cces_dmas_whm.csv")
+```
+
+Data sources
+
+Ansolabehere, Stephen; Schaffner, Brian F., 2017, "CCES16_Common_OUTPUT_Feb2018_VV.tab", CCES Common Content, 2016, https://doi.org/10.7910/DVN/GDF6Z0/JPMOZZ, Harvard Dataverse, V4, UNF:6:WhtR8dNtMzReHC295hA4cg== [fileUNF]

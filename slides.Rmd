@@ -1,0 +1,302 @@
+---
+title: "PS239T Final Project"
+author: Anna Mikkelborg
+date: December 4, 2019
+output:
+  revealjs::revealjs_presentation:
+    self_contained: false
+    transition: slide
+    center : true
+    highlight : zenburn
+    reveal_options:
+      slideNumber: true
+      center : true
+      help : true
+      previewLinks: true
+      width: 100%
+---
+# Data collection
+
+## "White History Month" search volume
+ - i.e., the popularity of searches for "white history month" relative to all other terms searched in the region
+ - Measure taken at the Nielson Designated Market Area (DMA) level (210 DMAs representing the entire country)
+
+
+## Biggest challenge: No official Google Trends API
+ - Secondary challenge: unofficial APIs in R do not allow searches for "x OR y", only "x AND y"
+ - Solution: pyTrends!
+ ```{r, eval = FALSE}
+ # Import required libraries
+import pandas as pd
+import time
+
+# pytrends is an unofficial Google Trends API
+from pytrends.request import TrendReq
+
+# connect with Google Trends
+pytrend = TrendReq(hl='en-US', tz=360)
+
+# create empty data frames
+interest_by_region_whm = pd.DataFrame()
+interest_by_region_weather = pd.DataFrame()
+interest_by_region_whmweather = pd.DataFrame()
+
+# query Google Trends 100 times
+for i in range(100):
+    # get search volumes for "White History Month" and add to appropriate data frame
+    pytrend.build_payload(['white history month'], timeframe='all', geo='US')
+    df1 = pytrend.interest_by_region(resolution ='DMA', inc_low_vol=True, inc_geo_code=False)
+    interest_by_region_whm = df1.append(interest_by_region_whm)
+    # get search volumes for "weather" and add to appropriate data frame
+    pytrend.build_payload(['weather'], timeframe='all', geo='US')
+    df2 = pytrend.interest_by_region(resolution='DMA',inc_low_vol=True, inc_geo_code=False)
+    interest_by_region_weather = df2.append(interest_by_region_weather)
+    # get search volumes for "weather + 'White History Month'" and add to appropriate data frame
+    pytrend.build_payload(['weather + \'white history month\''], timeframe='all', geo='US')
+    df3 = pytrend.interest_by_region(resolution='DMA', inc_low_vol=True, inc_geo_code=False)
+    interest_by_region_whmweather = df3.append(interest_by_region_whmweather)
+    # wait 1 second before next query
+    time.sleep(1)
+ ```
+
+## Challenge 2: Low search volumes don't show up on Google Trends
+ <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm.png">
+ 
+## Solution(?): Use regression to estimate search volumes
+
+1. Eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
+
+2. Create datasets of average scores for each region with complete data and all regions, including incompletes
+
+3. Regress "white history month" average score on "weather" average score and "white history month + weather" average score for markets that never score a 0 or 100 on "white history month"
+
+4. Use coefficients from regression to back out "white history month" for remaining markets, using their average search volume for "weather" and "white history month + weather"
+
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/weather.png">
+
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm_weather.png">
+
+##
+ ```{r, eval = FALSE}
+ # eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
+cuts <- subset(gdata$region, gdata$weather == 100 | gdata$weather == 0 
+  | gdata$white.history.month == 100 | gdata$white.history.month == 0)
+gdata_complete <- gdata %>%
+  filter(!(region %in% cuts))
+
+# create dataset of average scores for each region with complete data
+region_averages_complete <- gdata_complete %>%
+  group_by(region) %>%
+  summarise_at(vars(weather, white.history.month, weather....white.history.month.), 
+    funs(mean(., na.rm=TRUE)))
+
+# create dataset of average scores for all regions, including incompletes
+region_averages <- gdata %>%
+  group_by(region) %>%
+  summarise_at(vars(weather, weather....white.history.month.), funs(mean(., na.rm = TRUE)))
+
+# regress "white history month" average score on "weather" average score and 
+# "white history month + weather" average score for markets that never score 
+# a 0 or 100 on "white history month"
+whm_weather <- lm(white.history.month ~ weather, data = region_averages_complete)
+whm_whm_weather <- lm(white.history.month ~ weather....white.history.month., 
+  data = region_averages_complete)
+
+# use coefficients from regression to back out "white history month" for remaining markets, 
+# using their average search volume for "weather" and "white history month + weather"
+algorithm <- function(c, w) {
+  N <- whm_whm_weather$coefficients[2] * c - whm_weather$coefficients[2] * w
+  return(N)
+}
+
+region_averages$whm_estimate <- algorithm(region_averages$weather....white.history.month., 
+  region_averages$weather)
+ ```
+ 
+## Full disclosure: this did not work very well.
+```{r}
+check <- read.csv("~/Desktop/239T_materials/ps239T-final-project/Data/check.csv")
+head(check)
+```
+Other work using Google Trends data on uncommon search terms has used far more than 100 queries...
+
+## Racial conservatism
+2016 CCES items, subsetted to white respondents only:
+
+1. "I am angry that racism exists"
+
+2. "White people in the U.S. have certain advantages because of the color of their skin"
+
+3. "I often find myself fearful of people of other races"
+
+4. "Racial problems in the U.S. are rare, isolated situations"
+
+## After my Google Trends adventure, this was easy!
+```{r, eval = FALSE}
+# load CCES dataset and assign to dataframe "cces"
+load("~/Desktop/239T_materials/ps239T-final-project/Data/CCES16.RData")
+cces <- x
+# subset to variables of interest
+cces <- as.data.frame(cbind(cces$countyfips, cces$race, cces$CC16_422c, cces$CC16_422d, cces$CC16_422e, cces$CC16_422f))
+# label variables in subsetted data
+colnames(cces) <- c("countyfips", "race", "angry_racism_exists", "racial_advantages", "racial_fear", "racial_problems_isolated")
+# trim dataset to include only white respondents
+cces <- subset(cces, as.numeric(cces$race) == 1)
+```
+
+# Constructing analysis dataset
+## Re-scaling racial conservatism measures using a function
+```{r, eval = FALSE}
+# function to re-scale variables from 0 as most progressive to 1 as most conservative. 
+# takes a vector to re-scale and a logical value indicating whether scale should be reversed.
+rescale <- function(var, reverse) {
+  # re-scale from 1-5 to 0-1.
+  result <- (as.numeric(var) - 1) / 4
+  if (reverse == TRUE) {
+    result <- result * -1 + 1
+  }
+  return(result)
+}
+# re-scale racial attitudes
+cces %<>%
+  dplyr::mutate(
+    anger = rescale(angry_racism_exists, TRUE),
+    advantage = rescale(racial_advantages, FALSE),
+    fear = rescale(racial_fear, TRUE),
+    isolated = rescale(racial_problems_isolated, TRUE)
+  )
+#create racial conservatism score by averaging all measures
+cces %<>%
+  dplyr::mutate(racial_conservatism = rowMeans(select(., c(anger, advantage, fear, isolated
+  ))))
+```
+## Challenge 3: Search volumes are at DMA level; CCES items are at county level
+
+Solution: Use a crosswalk dataset
+  
+##
+```{r, eval = FALSE}
+# load county fips-DMA dataset and assign to dataframe "rosetta"
+load("~/Desktop/239T_materials/ps239T-final-project/Data/county_dma.RData")
+rosetta <- x
+# re-code county fips variable by appending state fips as first two digits
+rosetta$countyfips <- rosetta$STATEFP*1000+rosetta$CNTYFP
+# trim spaces from DMA data
+rosetta$DMA <- trimws(rosetta$DMA)
+# remove duplicate rows from rosetta dataset
+rosetta <- subset(rosetta, rosetta$DMA != "HARRISONBURG" & rosetta$DMA != "NORFOLK-PORTSMTH-NEWPT NWS" & rosetta$DMA != "CHARLOTTESVILLE" & rosetta$DMA != "RICHMOND-PETERSBURG" & rosetta$DMA != "ROANOKE-LYNCHBURG" & rosetta$DMA != "WASHINGTON, DC(HAGRSTWN)")
+# merge rosetta and cces dataframes on "countyfips"
+cces <- merge(cces, rosetta, by = "countyfips")
+# create a dataset of averages by DMA.
+cces_dmas <- cces %>%
+  group_by(DMA) %>%
+  mutate(dmamean_anger = mean(anger, na.rm = TRUE), dmamean_advantage = mean(advantage, na.rm = TRUE), dmamean_fear = mean(fear, na.rm = TRUE), dmamean_isolated = mean(isolated, na.rm =TRUE), dmamean_rc = mean(racial_conservatism, na.rm = TRUE))
+cces_dmas <- select(cces_dmas, c(DMA, dmamean_anger, dmamean_advantage, dmamean_fear, dmamean_isolated, dmamean_rc))
+cces_dmas <- unique(cces_dmas)
+```
+
+## Challenge 4: Merging on DMA
+ - The DMAs were notated differently across datasets, with some duplicates in the CCES data and one missing from the Google data.
+ - Solution: Re-order CCCES dataset and merge on alphabetized rank (maybe should have used a fuzzy merge instead - this was messy.)
+
+##
+```{r, eval = FALSE}
+# create new variable with consistent alphabetical order
+cces_dmas$dma_ord <- ifelse(cces_dmas$DMA == "COLUMBIA (MO) - JEFFERSON CITY (MO)", "COLUMBIA2", ifelse(cces_dmas$DMA == "COLUMBIA (SC)", "COLUMBIA1", ifelse(cces_dmas$DMA == "COLUMBUS (MS) - TUPELO(MS) - WEST POINT (MS)", "COLUMBUS3", ifelse(cces_dmas$DMA == "COLUMBUS (OH)", "COLUMBUS2", ifelse(cces_dmas$DMA == "PORTLAND (ME) - AUBURN (ME)", "PORTLAND2", ifelse(cces_dmas$DMA == "PORTLAND (OR)", "PORTLAND1", ifelse(cces_dmas$DMA == "SPRINGFIELD (MA) - HOLYOKE (MA)", "SPRINGFIELD2", ifelse(cces_dmas$DMA == "SPRINGFIELD (MO)", "SPRINGFIELD1", ifelse(cces_dmas$DMA == "WICHITA (KS) - HUTCHINSON (KS)", "WICHITA2", ifelse(cces_dmas$DMA == "WICHITA FALLS (TX) - LAWTON (OK)", "WICHITA1", cces_dmas$DMA))))))))))
+# rearrange cces_dmas in alphabetical order by DMA
+cces_dmas <- cces_dmas[order(cces_dmas$dma_ord),]
+# create alphabetical rank variable
+cces_dmas$alphabetical <- as.numeric(rownames(cces_dmas))
+# create vector of first three letters of each included DMA
+included <- toupper(substr(cces_dmas$DMA, 1, 3))
+# remove any DMAs not included in CCES dataset - take first 3 letters and cut if they don't match
+region_averages$region_first3 <- toupper(substr(region_averages$region, 1, 3))
+region_averages <- subset(region_averages, region_averages$region_first3 %in% included)
+# rearrange region_averages in alphabetical order by DMA
+region_averages <- region_averages[order(region_averages$region),]
+# create alphabetical rank variable
+region_averages$alphabetical <- as.numeric(rownames(region_averages))
+# merge datasets on alphabetical variable
+cces_dmas_whm <- merge(cces_dmas, region_averages, by = "alphabetical")
+```
+
+# Results
+ 
+## Univariate plots
+
+Tools: ggplot2 and ggsave
+```{r, eval = FALSE}
+# plot white history month search volume
+ggplot(data, aes(x = whm_estimate)) + geom_histogram(binwidth = 0.3) + ggtitle("Distribution of search volumes for \"White History Month\"")  + xlab("\"White History Month\" search volume by DMA") + ylab("Number of DMAs")
+ggsave("whm.png")
+# plot anger that racism exists
+ggplot(data, aes(x = dmamean_anger)) + geom_histogram(binwidth = 0.02) + ggtitle("Average anger that racism exists") + xlab("Expressed anger, 0 (most angry)-1 (least angry)") + ylab("Number of DMAs")
+ggsave("anger.png")
+# plot awareness of racial advantage
+ggplot(data, aes(x = dmamean_advantage)) + geom_histogram(binwidth = 0.02) + ggtitle("Average belief in racial advantage") + xlab("Belief in advantage, 0 (most)-1 (least)") + ylab("Number of DMAs")
+ggsave("advantage.png")
+# plot fear of other races
+ggplot(data, aes(x = dmamean_fear)) + geom_histogram(binwidth = 0.02) + ggtitle("Average fear of other races") + xlab("Expressed fear, 0 (least fear)-1 (most fear)") + ylab("Number of DMAs")
+ggsave("fear.png")
+# plot belief that racism only occurs in isolated incidents
+ggplot(data, aes(x = dmamean_isolated)) + geom_histogram(binwidth = 0.02) + ggtitle("Average belief that racial incidents are isolated situations") + xlab("Agreement, 0 (disagree)-1 (agree)") + ylab("Number of DMAs")
+ggsave("isolated.png")
+# plot racial conservatism
+ggplot(data, aes(x = dmamean_rc)) + geom_histogram(binwidth = 0.02) + ggtitle("Average racial conservatism score by DMA") + xlab("Least to most conservative") + ylab("Number of DMAs")
+ggsave("rc.png")
+```
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/advantage.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/anger.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/fear.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/isolated.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/rc.png">
+
+## Bivariate results
+ - Regression analysis used to examine relationship between search volumes for White History Month and traditional polling measures of racial conservatism
+ - Tool: stargazer package
+```{r, eval = FALSE}
+data <- read.csv("~/Desktop/239T_materials/ps239T-final-project/Data/cces_dmas_whm.csv")
+# regression analysis - anger
+anger <- lm(whm_estimate ~ dmamean_anger, data = data)
+# regression analysis - fear
+fear <- lm(whm_estimate ~ dmamean_fear, data = data)
+# regression analysis - belief that racial incidents are isolated
+isolated <- lm(whm_estimate ~ dmamean_isolated, data = data)
+# regression analysis - belief in white racial advantage
+advantage <- lm(whm_estimate ~ dmamean_advantage, data = data)
+# regression analysis - racial conservatism
+racial_conservatism <- lm(whm_estimate ~ dmamean_rc, data = data)
+stargazer(anger, fear, isolated, advantage, racial_conservatism, type = "html", out = "~/Desktop/239T_materials/ps239T-final-project/Results/models.html")
+```
+## Regression models
+ <img src="~/Desktop/239T_materials/ps239T-final-project/Results/models.png" height="600">
+ 
+## Regression plots
+```{r, eval = FALSE}
+# white history month search frequency and anger that racism exists
+ggplot(data, aes(x = dmamean_anger, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and anger that racism exists") + xlab("Anger at racism (most to least)") + ylab("White History Month search volume")
+ggsave("whm_anger.png")
+# white history month search frequency and belief in racial advantage
+ggplot(data, aes(x = dmamean_advantage, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and belief in white advantage") + xlab("Belief in white advantage (most to least)") + ylab("White History Month search volume")
+ggsave("whm_advantage.png")
+# white history month search frequency and fear of other races
+ggplot(data, aes(x = dmamean_fear, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and fear of other races") + xlab("Fear of other races") + ylab("White History Month search volume")
+ggsave("whm_fear.png")
+# white history month search frequency and belief that racial incidents are isolated
+ggplot(data, aes(x = dmamean_isolated, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and belief that racial incidents are isolated") + xlab("Belief in incident isolation") + ylab("White History Month search volume")
+ggsave("whm_isolated.png")
+# white history month search frequency and racial conservatism
+ggplot(data, aes(x = dmamean_rc, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and racial conservatism") + xlab("Racial conservatism") + ylab("White History Month search volume")
+ggsave("whm_rc.png")
+```
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm_advantage.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm_anger.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm_fear.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm_isolated.png">
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Results/whm_rc.png">
+ 
+# Next steps
+ - Find a more efficient way to get Google Trends data on search volumes/allow for much more computing time
+ - Evaluate the measurement validity of these search volumes using some other measure - perhaps survey results on the salience of white identity or local news coverage of "White History Month" controversies?
+ - Think through other potential predictors of search volumes beyond racial conservatism

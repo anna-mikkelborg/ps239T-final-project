@@ -1,0 +1,82 @@
+---
+title: "03_analysis_and_visualization"
+author: "Anna Mikkelborg"
+date: "11/27/2019"
+output: html_document
+---
+```{r load required packages, warning = FALSE}
+pacman::p_load(
+  ggplot2,
+  stargazer
+)
+```
+
+
+```{r descriptive statistics, warning = FALSE}
+data <- read.csv("~/Desktop/239T_materials/ps239T-final-project/Data/cces_dmas_whm.csv")
+
+# regression analysis - anger
+anger <- lm(whm_estimate ~ dmamean_anger, data = data)
+
+# regression analysis - fear
+fear <- lm(whm_estimate ~ dmamean_fear, data = data)
+
+# regression analysis - belief that racial incidents are isolated
+isolated <- lm(whm_estimate ~ dmamean_isolated, data = data)
+
+# regression analysis - belief in white racial advantage
+advantage <- lm(whm_estimate ~ dmamean_advantage, data = data)
+
+# regression analysis - racial conservatism
+racial_conservatism <- lm(whm_estimate ~ dmamean_rc, data = data)
+
+stargazer(anger, fear, isolated, advantage, racial_conservatism, type = "html", out = "~/Desktop/239T_materials/ps239T-final-project/Results/models.html")
+```
+
+```{r univariate plots, warning = FALSE}
+# plot white history month search rate
+ggplot(data, aes(x = whm_estimate)) + geom_histogram(binwidth = 0.3) + ggtitle("Distribution of search rates for \"White History Month\"")  + xlab("\"White History Month\" search rate by DMA") + ylab("Number of DMAs")
+ggsave("whm.png")
+
+# plot anger that racism exists
+ggplot(data, aes(x = dmamean_anger)) + geom_histogram(binwidth = 0.02) + ggtitle("Average anger that racism exists") + xlab("Expressed anger, 0 (most angry)-1 (least angry)") + ylab("Number of DMAs")
+ggsave("anger.png")
+
+# plot awareness of racial advantage
+ggplot(data, aes(x = dmamean_advantage)) + geom_histogram(binwidth = 0.02) + ggtitle("Average belief in racial advantage") + xlab("Belief in advantage, 0 (most)-1 (least)") + ylab("Number of DMAs")
+ggsave("advantage.png")
+
+# plot fear of other races
+ggplot(data, aes(x = dmamean_fear)) + geom_histogram(binwidth = 0.02) + ggtitle("Average fear of other races") + xlab("Expressed fear, 0 (least fear)-1 (most fear)") + ylab("Number of DMAs")
+ggsave("fear.png")
+
+# plot belief that racism only occurs in isolated incidents
+ggplot(data, aes(x = dmamean_isolated)) + geom_histogram(binwidth = 0.02) + ggtitle("Average belief that racial incidents are isolated situations") + xlab("Agreement, 0 (disagree)-1 (agree)") + ylab("Number of DMAs")
+ggsave("isolated.png")
+
+# plot racial conservatism
+ggplot(data, aes(x = dmamean_rc)) + geom_histogram(binwidth = 0.02) + ggtitle("Average racial conservatism score by DMA") + xlab("Least to most conservative") + ylab("Number of DMAs")
+ggsave("rc.png")
+```
+
+```{r regression plots, warning = FALSE}
+# white history month search frequency and anger that racism exists
+ggplot(data, aes(x = dmamean_anger, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search rate and anger that racism exists") + xlab("Anger at racism (most to least)") + ylab("White History Month search rate")
+ggsave("whm_anger.png")
+
+# white history month search frequency and belief in racial advantage
+ggplot(data, aes(x = dmamean_advantage, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search rate and belief in white advantage") + xlab("Belief in white advantage (most to least)") + ylab("White History Month search rate")
+ggsave("whm_advantage.png")
+
+# white history month search frequency and fear of other races
+ggplot(data, aes(x = dmamean_fear, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search rate and fear of other races") + xlab("Fear of other races") + ylab("White History Month search rate")
+ggsave("whm_fear.png")
+
+# white history month search frequency and belief that racial incidents are isolated
+ggplot(data, aes(x = dmamean_isolated, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search rate and belief that racial incidents are isolated") + xlab("Belief in incident isolation") + ylab("White History Month search rate")
+ggsave("whm_isolated.png")
+
+# white history month search frequency and racial conservatism
+ggplot(data, aes(x = dmamean_rc, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search rate and racial conservatism") + xlab("Racial conservatism") + ylab("White History Month search rate")
+ggsave("whm_rc.png")
+```

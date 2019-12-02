@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Anna Mikkelborg" />
+  <meta name="dcterms.date" content="2019-12-04" />
+  <title>PS239T Final Project</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="slides_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  { color: #cccccc; background-color: #303030; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffcfaf; } /* Alert */
+code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #dca3a3; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #f0dfaf; } /* ControlFlow */
+code span.ch { color: #dca3a3; } /* Char */
+code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+code span.co { color: #7f9f7f; } /* Comment */
+code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+code span.do { color: #7f9f7f; } /* Documentation */
+code span.dt { color: #dfdfbf; } /* DataType */
+code span.dv { color: #dcdccc; } /* DecVal */
+code span.er { color: #c3bf9f; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #c0bed1; } /* Float */
+code span.fu { color: #efef8f; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+code span.kw { color: #f0dfaf; } /* Keyword */
+code span.op { color: #f0efd0; } /* Operator */
+code span.ot { color: #efef8f; } /* Other */
+code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+code span.sc { color: #dca3a3; } /* SpecialChar */
+code span.ss { color: #cc9393; } /* SpecialString */
+code span.st { color: #cc9393; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #cc9393; } /* VerbatimString */
+code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="slides_files/reveal.js-3.3.0.1/css/theme/simple.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">PS239T Final Project</h1>
+    <h2 class="author">Anna Mikkelborg</h2>
+    <h3 class="date">December 4, 2019</h3>
+</section>
+
+<section><section id="data-collection" class="title-slide slide level1"><h1>Data collection</h1></section><section id="white-history-month-search-volume" class="slide level2">
+<h2>“White History Month” search volume</h2>
+<ul>
+<li>i.e., the popularity of searches for “white history month” relative to all other terms searched in the region</li>
+<li>Measure taken at the Nielson Designated Market Area (DMA) level (210 DMAs representing the entire country)</li>
+</ul>
+</section><section id="biggest-challenge-no-official-google-trends-api" class="slide level2">
+<h2>Biggest challenge: No official Google Trends API</h2>
+<ul>
+<li>Secondary challenge: unofficial APIs in R do not allow searches for “x OR y”, only “x AND y”</li>
+<li>Solution: pyTrends!</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Import required libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>import pandas as pd</span>
+<span id="cb1-3"><a href="#cb1-3"></a>import time</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># pytrends is an unofficial Google Trends API</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>from pytrends.request import TrendReq</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># connect with Google Trends</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>pytrend =<span class="st"> </span><span class="kw">TrendReq</span>(<span class="dt">hl=</span><span class="st">&#39;en-US&#39;</span>, <span class="dt">tz=</span><span class="dv">360</span>)</span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co"># create empty data frames</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>interest_by_region_whm =<span class="st"> </span><span class="kw">pd.DataFrame</span>()</span>
+<span id="cb1-13"><a href="#cb1-13"></a>interest_by_region_weather =<span class="st"> </span><span class="kw">pd.DataFrame</span>()</span>
+<span id="cb1-14"><a href="#cb1-14"></a>interest_by_region_whmweather =<span class="st"> </span><span class="kw">pd.DataFrame</span>()</span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co"># query Google Trends 100 times</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="cf">for</span> i <span class="cf">in</span> <span class="kw">range</span>(<span class="dv">100</span>)<span class="op">:</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="st">   </span><span class="co"># get search volumes for &quot;White History Month&quot; and add to appropriate data frame</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="st">   </span><span class="kw">pytrend.build_payload</span>([<span class="st">&#39;white history month&#39;</span>], <span class="dt">timeframe=</span><span class="st">&#39;all&#39;</span>, <span class="dt">geo=</span><span class="st">&#39;US&#39;</span>)</span>
+<span id="cb1-20"><a href="#cb1-20"></a>   df1 =<span class="st"> </span><span class="kw">pytrend.interest_by_region</span>(<span class="dt">resolution =</span><span class="st">&#39;DMA&#39;</span>, <span class="dt">inc_low_vol=</span>True, <span class="dt">inc_geo_code=</span>False)</span>
+<span id="cb1-21"><a href="#cb1-21"></a>   interest_by_region_whm =<span class="st"> </span><span class="kw">df1.append</span>(interest_by_region_whm)</span>
+<span id="cb1-22"><a href="#cb1-22"></a>   <span class="co"># get search volumes for &quot;weather&quot; and add to appropriate data frame</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>   <span class="kw">pytrend.build_payload</span>([<span class="st">&#39;weather&#39;</span>], <span class="dt">timeframe=</span><span class="st">&#39;all&#39;</span>, <span class="dt">geo=</span><span class="st">&#39;US&#39;</span>)</span>
+<span id="cb1-24"><a href="#cb1-24"></a>   df2 =<span class="st"> </span><span class="kw">pytrend.interest_by_region</span>(<span class="dt">resolution=</span><span class="st">&#39;DMA&#39;</span>,<span class="dt">inc_low_vol=</span>True, <span class="dt">inc_geo_code=</span>False)</span>
+<span id="cb1-25"><a href="#cb1-25"></a>   interest_by_region_weather =<span class="st"> </span><span class="kw">df2.append</span>(interest_by_region_weather)</span>
+<span id="cb1-26"><a href="#cb1-26"></a>   <span class="co"># get search volumes for &quot;weather + &#39;White History Month&#39;&quot; and add to appropriate data frame</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>   <span class="kw">pytrend.build_payload</span>([<span class="st">&#39;weather + </span><span class="ch">\&#39;</span><span class="st">white history month</span><span class="ch">\&#39;</span><span class="st">&#39;</span>], <span class="dt">timeframe=</span><span class="st">&#39;all&#39;</span>, <span class="dt">geo=</span><span class="st">&#39;US&#39;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28"></a>   df3 =<span class="st"> </span><span class="kw">pytrend.interest_by_region</span>(<span class="dt">resolution=</span><span class="st">&#39;DMA&#39;</span>, <span class="dt">inc_low_vol=</span>True, <span class="dt">inc_geo_code=</span>False)</span>
+<span id="cb1-29"><a href="#cb1-29"></a>   interest_by_region_whmweather =<span class="st"> </span><span class="kw">df3.append</span>(interest_by_region_whmweather)</span>
+<span id="cb1-30"><a href="#cb1-30"></a>   <span class="co"># wait 1 second before next query</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a>   <span class="kw">time.sleep</span>(<span class="dv">1</span>)</span></code></pre></div>
+</section><section id="challenge-2-low-search-volumes-dont-show-up-on-google-trends" class="slide level2">
+<h2>Challenge 2: Low search volumes don’t show up on Google Trends</h2>
+<p><img src="Data/whm.png"></p>
+</section><section id="solution-use-regression-to-estimate-search-volumes" class="slide level2">
+<h2>Solution(?): Use regression to estimate search volumes</h2>
+<ol type="1">
+<li><p>Eliminate any media market that ever scores 0 or 100 for “weather” or “white history month”</p></li>
+<li><p>Create datasets of average scores for each region with complete data and all regions, including incompletes</p></li>
+<li><p>Regress “white history month” average score on “weather” average score and “white history month + weather” average score for markets that never score a 0 or 100 on “white history month”</p></li>
+<li><p>Use coefficients from regression to back out “white history month” for remaining markets, using their average search volume for “weather” and “white history month + weather”</p></li>
+</ol>
+</section><section id="section" class="slide level2">
+<h2><img src="Data/weather.png"></h2>
+</section><section id="section-1" class="slide level2">
+<h2><img src="Data/whm_weather.png"></h2>
+</section><section id="section-2" class="slide level2">
+<h2></h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># eliminate any media market that ever scores 0 or 100 for &quot;weather&quot; or &quot;white history month&quot;</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>cuts &lt;-<span class="st"> </span><span class="kw">subset</span>(gdata<span class="op">$</span>region, gdata<span class="op">$</span>weather <span class="op">==</span><span class="st"> </span><span class="dv">100</span> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>weather <span class="op">==</span><span class="st"> </span><span class="dv">0</span> </span>
+<span id="cb2-3"><a href="#cb2-3"></a> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>white.history.month <span class="op">==</span><span class="st"> </span><span class="dv">100</span> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>white.history.month <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>gdata_complete &lt;-<span class="st"> </span>gdata <span class="op">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span>(region <span class="op">%in%</span><span class="st"> </span>cuts))</span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co"># create dataset of average scores for each region with complete data</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>region_averages_complete &lt;-<span class="st"> </span>gdata_complete <span class="op">%&gt;%</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="st"> </span><span class="kw">group_by</span>(region) <span class="op">%&gt;%</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="st"> </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(weather, white.history.month, weather....white.history.month.), </span>
+<span id="cb2-11"><a href="#cb2-11"></a>   <span class="kw">funs</span>(<span class="kw">mean</span>(., <span class="dt">na.rm=</span><span class="ot">TRUE</span>)))</span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co"># create dataset of average scores for all regions, including incompletes</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>region_averages &lt;-<span class="st"> </span>gdata <span class="op">%&gt;%</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="st"> </span><span class="kw">group_by</span>(region) <span class="op">%&gt;%</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="st"> </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(weather, weather....white.history.month.), <span class="kw">funs</span>(<span class="kw">mean</span>(., <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co"># regress &quot;white history month&quot; average score on &quot;weather&quot; average score and </span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co"># &quot;white history month + weather&quot; average score for markets that never score </span></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co"># a 0 or 100 on &quot;white history month&quot;</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a>whm_weather &lt;-<span class="st"> </span><span class="kw">lm</span>(white.history.month <span class="op">~</span><span class="st"> </span>weather, <span class="dt">data =</span> region_averages_complete)</span>
+<span id="cb2-22"><a href="#cb2-22"></a>whm_whm_weather &lt;-<span class="st"> </span><span class="kw">lm</span>(white.history.month <span class="op">~</span><span class="st"> </span>weather....white.history.month., </span>
+<span id="cb2-23"><a href="#cb2-23"></a> <span class="dt">data =</span> region_averages_complete)</span>
+<span id="cb2-24"><a href="#cb2-24"></a></span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="co"># use coefficients from regression to back out &quot;white history month&quot; for remaining markets, </span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co"># using their average search volume for &quot;weather&quot; and &quot;white history month + weather&quot;</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a>algorithm &lt;-<span class="st"> </span><span class="cf">function</span>(c, w) {</span>
+<span id="cb2-28"><a href="#cb2-28"></a> N &lt;-<span class="st"> </span>whm_whm_weather<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="op">*</span><span class="st"> </span>c <span class="op">-</span><span class="st"> </span>whm_weather<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="op">*</span><span class="st"> </span>w</span>
+<span id="cb2-29"><a href="#cb2-29"></a> <span class="kw">return</span>(N)</span>
+<span id="cb2-30"><a href="#cb2-30"></a>}</span>
+<span id="cb2-31"><a href="#cb2-31"></a></span>
+<span id="cb2-32"><a href="#cb2-32"></a>region_averages<span class="op">$</span>whm_estimate &lt;-<span class="st"> </span><span class="kw">algorithm</span>(region_averages<span class="op">$</span>weather....white.history.month., </span>
+<span id="cb2-33"><a href="#cb2-33"></a> region_averages<span class="op">$</span>weather)</span></code></pre></div>
+</section><section id="full-disclosure-this-did-not-work-very-well." class="slide level2">
+<h2>Full disclosure: this did not work very well.</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>check &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/check.csv&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">head</span>(check)</span></code></pre></div>
+<pre><code>##   X                      region white.history.month whm_estimate
+## 1 1                  Atlanta GA               76.70     6.284836
+## 2 2     Boston MA-Manchester NH               43.89     7.444552
+## 3 3                Charlotte NC               81.49     7.121456
+## 4 4                  Chicago IL               61.91     6.438711
+## 5 5 Cleveland-Akron (Canton) OH               71.82     7.360759
+## 6 6         Dallas-Ft. Worth TX               61.27     5.876394</code></pre>
+<p>Other work using Google Trends data on uncommon search terms has used far more than 100 queries…</p>
+</section><section id="racial-conservatism" class="slide level2">
+<h2>Racial conservatism</h2>
+<p>2016 CCES items, subsetted to white respondents only:</p>
+<ol type="1">
+<li><p>“I am angry that racism exists”</p></li>
+<li><p>“White people in the U.S. have certain advantages because of the color of their skin”</p></li>
+<li><p>“I often find myself fearful of people of other races”</p></li>
+<li><p>“Racial problems in the U.S. are rare, isolated situations”</p></li>
+</ol>
+</section><section id="after-my-google-trends-adventure-this-was-easy" class="slide level2">
+<h2>After my Google Trends adventure, this was easy!</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># load CCES dataset and assign to dataframe &quot;cces&quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">load</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/CCES16.RData&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>cces &lt;-<span class="st"> </span>x</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># subset to variables of interest</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>cces &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(cces<span class="op">$</span>countyfips, cces<span class="op">$</span>race, cces<span class="op">$</span>CC16_422c, cces<span class="op">$</span>CC16_422d, cces<span class="op">$</span>CC16_422e, cces<span class="op">$</span>CC16_422f))</span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co"># label variables in subsetted data</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="kw">colnames</span>(cces) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;countyfips&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;angry_racism_exists&quot;</span>, <span class="st">&quot;racial_advantages&quot;</span>, <span class="st">&quot;racial_fear&quot;</span>, <span class="st">&quot;racial_problems_isolated&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8"></a><span class="co"># trim dataset to include only white respondents</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>cces &lt;-<span class="st"> </span><span class="kw">subset</span>(cces, <span class="kw">as.numeric</span>(cces<span class="op">$</span>race) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)</span></code></pre></div>
+</section></section>
+<section><section id="constructing-analysis-dataset" class="title-slide slide level1"><h1>Constructing analysis dataset</h1></section><section id="re-scaling-racial-conservatism-measures-using-a-function" class="slide level2">
+<h2>Re-scaling racial conservatism measures using a function</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># function to re-scale variables from 0 as most progressive to 1 as most conservative. </span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="co"># takes a vector to re-scale and a logical value indicating whether scale should be reversed.</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>rescale &lt;-<span class="st"> </span><span class="cf">function</span>(var, reverse) {</span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="co"># re-scale from 1-5 to 0-1.</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>  result &lt;-<span class="st"> </span>(<span class="kw">as.numeric</span>(var) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>) <span class="op">/</span><span class="st"> </span><span class="dv">4</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="cf">if</span> (reverse <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>) {</span>
+<span id="cb6-7"><a href="#cb6-7"></a>    result &lt;-<span class="st"> </span>result <span class="op">*</span><span class="st"> </span><span class="dv">-1</span> <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>  }</span>
+<span id="cb6-9"><a href="#cb6-9"></a>  <span class="kw">return</span>(result)</span>
+<span id="cb6-10"><a href="#cb6-10"></a>}</span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co"># re-scale racial attitudes</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>cces <span class="op">%&lt;&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(</span>
+<span id="cb6-14"><a href="#cb6-14"></a>    <span class="dt">anger =</span> <span class="kw">rescale</span>(angry_racism_exists, <span class="ot">TRUE</span>),</span>
+<span id="cb6-15"><a href="#cb6-15"></a>    <span class="dt">advantage =</span> <span class="kw">rescale</span>(racial_advantages, <span class="ot">FALSE</span>),</span>
+<span id="cb6-16"><a href="#cb6-16"></a>    <span class="dt">fear =</span> <span class="kw">rescale</span>(racial_fear, <span class="ot">TRUE</span>),</span>
+<span id="cb6-17"><a href="#cb6-17"></a>    <span class="dt">isolated =</span> <span class="kw">rescale</span>(racial_problems_isolated, <span class="ot">TRUE</span>)</span>
+<span id="cb6-18"><a href="#cb6-18"></a>  )</span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="co">#create racial conservatism score by averaging all measures</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>cces <span class="op">%&lt;&gt;%</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">racial_conservatism =</span> <span class="kw">rowMeans</span>(<span class="kw">select</span>(., <span class="kw">c</span>(anger, advantage, fear, isolated</span>
+<span id="cb6-22"><a href="#cb6-22"></a>  ))))</span></code></pre></div>
+</section><section id="challenge-3-search-volumes-are-at-dma-level-cces-items-are-at-county-level" class="slide level2">
+<h2>Challenge 3: Search volumes are at DMA level; CCES items are at county level</h2>
+<p>Solution: Use a crosswalk dataset</p>
+</section><section id="section-3" class="slide level2">
+<h2></h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># load county fips-DMA dataset and assign to dataframe &quot;rosetta&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">load</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/county_dma.RData&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>rosetta &lt;-<span class="st"> </span>x</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># re-code county fips variable by appending state fips as first two digits</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>rosetta<span class="op">$</span>countyfips &lt;-<span class="st"> </span>rosetta<span class="op">$</span>STATEFP<span class="op">*</span><span class="dv">1000</span><span class="op">+</span>rosetta<span class="op">$</span>CNTYFP</span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># trim spaces from DMA data</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>rosetta<span class="op">$</span>DMA &lt;-<span class="st"> </span><span class="kw">trimws</span>(rosetta<span class="op">$</span>DMA)</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co"># remove duplicate rows from rosetta dataset</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>rosetta &lt;-<span class="st"> </span><span class="kw">subset</span>(rosetta, rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;HARRISONBURG&quot;</span> <span class="op">&amp;</span><span class="st"> </span>rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;NORFOLK-PORTSMTH-NEWPT NWS&quot;</span> <span class="op">&amp;</span><span class="st"> </span>rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;CHARLOTTESVILLE&quot;</span> <span class="op">&amp;</span><span class="st"> </span>rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;RICHMOND-PETERSBURG&quot;</span> <span class="op">&amp;</span><span class="st"> </span>rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;ROANOKE-LYNCHBURG&quot;</span> <span class="op">&amp;</span><span class="st"> </span>rosetta<span class="op">$</span>DMA <span class="op">!=</span><span class="st"> &quot;WASHINGTON, DC(HAGRSTWN)&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co"># merge rosetta and cces dataframes on &quot;countyfips&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>cces &lt;-<span class="st"> </span><span class="kw">merge</span>(cces, rosetta, <span class="dt">by =</span> <span class="st">&quot;countyfips&quot;</span>)</span>
+<span id="cb7-12"><a href="#cb7-12"></a><span class="co"># create a dataset of averages by DMA.</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>cces_dmas &lt;-<span class="st"> </span>cces <span class="op">%&gt;%</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a><span class="st">  </span><span class="kw">group_by</span>(DMA) <span class="op">%&gt;%</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dmamean_anger =</span> <span class="kw">mean</span>(anger, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_advantage =</span> <span class="kw">mean</span>(advantage, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_fear =</span> <span class="kw">mean</span>(fear, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_isolated =</span> <span class="kw">mean</span>(isolated, <span class="dt">na.rm =</span><span class="ot">TRUE</span>), <span class="dt">dmamean_rc =</span> <span class="kw">mean</span>(racial_conservatism, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb7-16"><a href="#cb7-16"></a>cces_dmas &lt;-<span class="st"> </span><span class="kw">select</span>(cces_dmas, <span class="kw">c</span>(DMA, dmamean_anger, dmamean_advantage, dmamean_fear, dmamean_isolated, dmamean_rc))</span>
+<span id="cb7-17"><a href="#cb7-17"></a>cces_dmas &lt;-<span class="st"> </span><span class="kw">unique</span>(cces_dmas)</span></code></pre></div>
+</section><section id="challenge-4-merging-on-dma" class="slide level2">
+<h2>Challenge 4: Merging on DMA</h2>
+<ul>
+<li>The DMAs were notated differently across datasets, with some duplicates in the CCES data and one missing from the Google data.</li>
+<li>Solution: Re-order CCCES dataset and merge on alphabetized rank (maybe should have used a fuzzy merge instead - this was messy.)</li>
+</ul>
+</section><section id="section-4" class="slide level2">
+<h2></h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># create new variable with consistent alphabetical order</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>cces_dmas<span class="op">$</span>dma_ord &lt;-<span class="st"> </span><span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBIA (MO) - JEFFERSON CITY (MO)&quot;</span>, <span class="st">&quot;COLUMBIA2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBIA (SC)&quot;</span>, <span class="st">&quot;COLUMBIA1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBUS (MS) - TUPELO(MS) - WEST POINT (MS)&quot;</span>, <span class="st">&quot;COLUMBUS3&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBUS (OH)&quot;</span>, <span class="st">&quot;COLUMBUS2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;PORTLAND (ME) - AUBURN (ME)&quot;</span>, <span class="st">&quot;PORTLAND2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;PORTLAND (OR)&quot;</span>, <span class="st">&quot;PORTLAND1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;SPRINGFIELD (MA) - HOLYOKE (MA)&quot;</span>, <span class="st">&quot;SPRINGFIELD2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;SPRINGFIELD (MO)&quot;</span>, <span class="st">&quot;SPRINGFIELD1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;WICHITA (KS) - HUTCHINSON (KS)&quot;</span>, <span class="st">&quot;WICHITA2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;WICHITA FALLS (TX) - LAWTON (OK)&quot;</span>, <span class="st">&quot;WICHITA1&quot;</span>, cces_dmas<span class="op">$</span>DMA))))))))))</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># rearrange cces_dmas in alphabetical order by DMA</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>cces_dmas &lt;-<span class="st"> </span>cces_dmas[<span class="kw">order</span>(cces_dmas<span class="op">$</span>dma_ord),]</span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># create alphabetical rank variable</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>cces_dmas<span class="op">$</span>alphabetical &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(cces_dmas))</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># create vector of first three letters of each included DMA</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>included &lt;-<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">substr</span>(cces_dmas<span class="op">$</span>DMA, <span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co"># remove any DMAs not included in CCES dataset - take first 3 letters and cut if they don&#39;t match</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>region_averages<span class="op">$</span>region_first3 &lt;-<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">substr</span>(region_averages<span class="op">$</span>region, <span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb8-11"><a href="#cb8-11"></a>region_averages &lt;-<span class="st"> </span><span class="kw">subset</span>(region_averages, region_averages<span class="op">$</span>region_first3 <span class="op">%in%</span><span class="st"> </span>included)</span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="co"># rearrange region_averages in alphabetical order by DMA</span></span>
+<span id="cb8-13"><a href="#cb8-13"></a>region_averages &lt;-<span class="st"> </span>region_averages[<span class="kw">order</span>(region_averages<span class="op">$</span>region),]</span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="co"># create alphabetical rank variable</span></span>
+<span id="cb8-15"><a href="#cb8-15"></a>region_averages<span class="op">$</span>alphabetical &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(region_averages))</span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co"># merge datasets on alphabetical variable</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a>cces_dmas_whm &lt;-<span class="st"> </span><span class="kw">merge</span>(cces_dmas, region_averages, <span class="dt">by =</span> <span class="st">&quot;alphabetical&quot;</span>)</span></code></pre></div>
+</section></section>
+<section><section id="results" class="title-slide slide level1"><h1>Results</h1></section><section id="univariate-plots" class="slide level2">
+<h2>Univariate plots</h2>
+<p>Tools: ggplot2 and ggsave</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># plot white history month search volume</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distribution of search volumes for </span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st">&quot;</span>)  <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st"> search volume by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm.png&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># plot anger that racism exists</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed anger, 0 (most angry)-1 (least angry)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="kw">ggsave</span>(<span class="st">&quot;anger.png&quot;</span>)</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co"># plot awareness of racial advantage</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief in racial advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in advantage, 0 (most)-1 (least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="kw">ggsave</span>(<span class="st">&quot;advantage.png&quot;</span>)</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># plot fear of other races</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed fear, 0 (least fear)-1 (most fear)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="kw">ggsave</span>(<span class="st">&quot;fear.png&quot;</span>)</span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co"># plot belief that racism only occurs in isolated incidents</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief that racial incidents are isolated situations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Agreement, 0 (disagree)-1 (agree)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;isolated.png&quot;</span>)</span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co"># plot racial conservatism</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average racial conservatism score by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Least to most conservative&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb9-18"><a href="#cb9-18"></a><span class="kw">ggsave</span>(<span class="st">&quot;rc.png&quot;</span>)</span></code></pre></div>
+</section><section id="section-5" class="slide level2">
+<h2><img src="Results/whm.png"></h2>
+</section><section id="section-6" class="slide level2">
+<h2><img src="Results/advantage.png"></h2>
+</section><section id="section-7" class="slide level2">
+<h2><img src="Results/anger.png"></h2>
+</section><section id="section-8" class="slide level2">
+<h2><img src="Results/fear.png"></h2>
+</section><section id="section-9" class="slide level2">
+<h2><img src="Results/isolated.png"></h2>
+</section><section id="section-10" class="slide level2">
+<h2><img src="Results/rc.png"></h2>
+</section><section id="bivariate-results" class="slide level2">
+<h2>Bivariate results</h2>
+<ul>
+<li>Regression analysis used to examine relationship between search volumes for White History Month and traditional polling measures of racial conservatism</li>
+<li>Tool: stargazer package</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/cces_dmas_whm.csv&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co"># regression analysis - anger</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>anger &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_anger, <span class="dt">data =</span> data)</span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># regression analysis - fear</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>fear &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_fear, <span class="dt">data =</span> data)</span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co"># regression analysis - belief that racial incidents are isolated</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>isolated &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_isolated, <span class="dt">data =</span> data)</span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co"># regression analysis - belief in white racial advantage</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>advantage &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_advantage, <span class="dt">data =</span> data)</span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="co"># regression analysis - racial conservatism</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>racial_conservatism &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_rc, <span class="dt">data =</span> data)</span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="kw">stargazer</span>(anger, fear, isolated, advantage, racial_conservatism, <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">out =</span> <span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Results/models.html&quot;</span>)</span></code></pre></div>
+</section><section id="regression-models" class="slide level2">
+<h2>Regression models</h2>
+<p><img src="Results/models.png" height="600"></p>
+</section><section id="regression-plots" class="slide level2">
+<h2>Regression plots</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># white history month search frequency and anger that racism exists</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Anger at racism (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_anger.png&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="co"># white history month search frequency and belief in racial advantage</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief in white advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in white advantage (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_advantage.png&quot;</span>)</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="co"># white history month search frequency and fear of other races</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_fear.png&quot;</span>)</span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="co"># white history month search frequency and belief that racial incidents are isolated</span></span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief that racial incidents are isolated&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in incident isolation&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_isolated.png&quot;</span>)</span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="co"># white history month search frequency and racial conservatism</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb11-15"><a href="#cb11-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_rc.png&quot;</span>)</span></code></pre></div>
+</section><section id="section-11" class="slide level2">
+<h2><img src="Results/whm_advantage.png"></h2>
+</section><section id="section-12" class="slide level2">
+<h2><img src="Results/whm_anger.png"></h2>
+</section><section id="section-13" class="slide level2">
+<h2><img src="Results/whm_fear.png"></h2>
+</section><section id="section-14" class="slide level2">
+<h2><img src="Results/whm_isolated.png"></h2>
+</section><section id="section-15" class="slide level2">
+<h2><img src="Results/whm_rc.png"></h2>
+</section></section>
+<section id="next-steps" class="title-slide slide level1"><h1>Next steps</h1><ul>
+<li>Find a more efficient way to get Google Trends data on search volumes/allow for much more computing time</li>
+<li>Evaluate the measurement validity of these search volumes using some other measure - perhaps survey results on the salience of white identity or local news coverage of “White History Month” controversies?</li>
+<li>Think through other potential predictors of search volumes beyond racial conservatism</li>
+</ul></section>
+    </div>
+  </div>
+
+  <script src="slides_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="slides_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: true,
+        // Transition style
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: '100%',
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
