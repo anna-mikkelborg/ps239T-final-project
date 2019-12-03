@@ -5,6 +5,7 @@ date: December 4, 2019
 output:
   revealjs::revealjs_presentation:
     self_contained: false
+    theme: league
     transition: slide
     center : true
     highlight : zenburn
@@ -131,7 +132,7 @@ Other work using Google Trends data on uncommon search terms has used far more t
 
 4. "Racial problems in the U.S. are rare, isolated situations"
 
-## After my Google Trends adventure, this was easy!
+## After my Google Trends adventure, this was easy.
 ```{r, eval = FALSE}
 # load CCES dataset and assign to dataframe "cces"
 load("~/Desktop/239T_materials/ps239T-final-project/Data/CCES16.RData")
