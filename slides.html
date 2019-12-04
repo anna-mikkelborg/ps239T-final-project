@@ -525,6 +525,21 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <li>i.e., the popularity of searches for “white history month” relative to all other terms searched in the region</li>
 <li>Measure taken at the Nielson Designated Market Area (DMA) level (210 DMAs representing the entire country)</li>
 </ul>
+</section><section id="challenge-low-search-volumes-dont-show-up-on-google-trends" class="slide level2">
+<h2>Challenge: Low search volumes don’t show up on Google Trends</h2>
+<p><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/whm.png"></p>
+</section><section id="solution-use-regression-to-estimate-search-volumes" class="slide level2">
+<h2>Solution(?): Use regression to estimate search volumes</h2>
+<ol type="1">
+<li><p>Eliminate any media market that ever scores 0 or 100 for “weather” or “white history month”</p></li>
+<li><p>Create two datasets of average scores for each region with complete data and all regions, including incompletes</p></li>
+<li><p>Regress “white history month” average score on “weather” average score and “white history month + weather” average score for markets that never score a 0 or 100 on “white history month”</p></li>
+<li><p>Use coefficients from regression to back out “white history month” for remaining markets, using their average search volume for “weather” and “white history month + weather”</p></li>
+</ol>
+</section><section id="section" class="slide level2">
+<h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/weather.png"></h2>
+</section><section id="section-1" class="slide level2">
+<h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/whm_weather.png"></h2>
 </section><section id="biggest-challenge-no-official-google-trends-api" class="slide level2">
 <h2>Biggest challenge: No official Google Trends API</h2>
 <ul>
@@ -562,23 +577,8 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <span id="cb1-29"><a href="#cb1-29"></a>   interest_by_region_whmweather =<span class="st"> </span><span class="kw">df3.append</span>(interest_by_region_whmweather)</span>
 <span id="cb1-30"><a href="#cb1-30"></a>   <span class="co"># wait 1 second before next query</span></span>
 <span id="cb1-31"><a href="#cb1-31"></a>   <span class="kw">time.sleep</span>(<span class="dv">1</span>)</span></code></pre></div>
-</section><section id="challenge-2-low-search-volumes-dont-show-up-on-google-trends" class="slide level2">
-<h2>Challenge 2: Low search volumes don’t show up on Google Trends</h2>
-<p><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/whm.png"></p>
-</section><section id="solution-use-regression-to-estimate-search-volumes" class="slide level2">
-<h2>Solution(?): Use regression to estimate search volumes</h2>
-<ol type="1">
-<li><p>Eliminate any media market that ever scores 0 or 100 for “weather” or “white history month”</p></li>
-<li><p>Create datasets of average scores for each region with complete data and all regions, including incompletes</p></li>
-<li><p>Regress “white history month” average score on “weather” average score and “white history month + weather” average score for markets that never score a 0 or 100 on “white history month”</p></li>
-<li><p>Use coefficients from regression to back out “white history month” for remaining markets, using their average search volume for “weather” and “white history month + weather”</p></li>
-</ol>
-</section><section id="section" class="slide level2">
-<h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/weather.png"></h2>
-</section><section id="section-1" class="slide level2">
-<h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Data/whm_weather.png"></h2>
-</section><section id="section-2" class="slide level2">
-<h2></h2>
+</section><section id="backing-out-search-volumes" class="slide level2">
+<h2>Backing out search volumes</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># eliminate any media market that ever scores 0 or 100 for &quot;weather&quot; or &quot;white history month&quot;</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>cuts &lt;-<span class="st"> </span><span class="kw">subset</span>(gdata<span class="op">$</span>region, gdata<span class="op">$</span>weather <span class="op">==</span><span class="st"> </span><span class="dv">100</span> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>weather <span class="op">==</span><span class="st"> </span><span class="dv">0</span> </span>
 <span id="cb2-3"><a href="#cb2-3"></a> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>white.history.month <span class="op">==</span><span class="st"> </span><span class="dv">100</span> <span class="op">|</span><span class="st"> </span>gdata<span class="op">$</span>white.history.month <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</span>
@@ -669,11 +669,12 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <span id="cb6-20"><a href="#cb6-20"></a>cces <span class="op">%&lt;&gt;%</span></span>
 <span id="cb6-21"><a href="#cb6-21"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">racial_conservatism =</span> <span class="kw">rowMeans</span>(<span class="kw">select</span>(., <span class="kw">c</span>(anger, advantage, fear, isolated</span>
 <span id="cb6-22"><a href="#cb6-22"></a>  ))))</span></code></pre></div>
-</section><section id="challenge-3-search-volumes-are-at-dma-level-cces-items-are-at-county-level" class="slide level2">
-<h2>Challenge 3: Search volumes are at DMA level; CCES items are at county level</h2>
-<p>Solution: Use a crosswalk dataset</p>
-</section><section id="section-3" class="slide level2">
-<h2></h2>
+</section><section id="challenge-different-levels-of-measurement" class="slide level2">
+<h2>Challenge: Different levels of measurement</h2>
+<ul>
+<li>Search volumes at DMA level; CCES items at county level</li>
+<li>Solution: Use a crosswalk dataset</li>
+</ul>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># load county fips-DMA dataset and assign to dataframe &quot;rosetta&quot;</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="kw">load</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/county_dma.RData&quot;</span>)</span>
 <span id="cb7-3"><a href="#cb7-3"></a>rosetta &lt;-<span class="st"> </span>x</span>
@@ -691,64 +692,45 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <span id="cb7-15"><a href="#cb7-15"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dmamean_anger =</span> <span class="kw">mean</span>(anger, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_advantage =</span> <span class="kw">mean</span>(advantage, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_fear =</span> <span class="kw">mean</span>(fear, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>), <span class="dt">dmamean_isolated =</span> <span class="kw">mean</span>(isolated, <span class="dt">na.rm =</span><span class="ot">TRUE</span>), <span class="dt">dmamean_rc =</span> <span class="kw">mean</span>(racial_conservatism, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>))</span>
 <span id="cb7-16"><a href="#cb7-16"></a>cces_dmas &lt;-<span class="st"> </span><span class="kw">select</span>(cces_dmas, <span class="kw">c</span>(DMA, dmamean_anger, dmamean_advantage, dmamean_fear, dmamean_isolated, dmamean_rc))</span>
 <span id="cb7-17"><a href="#cb7-17"></a>cces_dmas &lt;-<span class="st"> </span><span class="kw">unique</span>(cces_dmas)</span></code></pre></div>
-</section><section id="challenge-4-merging-on-dma" class="slide level2">
-<h2>Challenge 4: Merging on DMA</h2>
+</section><section id="challenge-merging-on-dma" class="slide level2">
+<h2>Challenge: Merging on DMA</h2>
 <ul>
 <li>The DMAs were notated differently across datasets, with some duplicates in the CCES data and one missing from the Google data.</li>
-<li>Solution: Re-order CCCES dataset and merge on alphabetized rank (maybe should have used a fuzzy merge instead - this was messy.)</li>
+<li>Solution: Re-order CCES dataset and merge on alphabetized rank (probably should have used a fuzzy merge instead - this was messy, and I’m not showing the code because it is not at all clever.)</li>
 </ul>
-</section><section id="section-4" class="slide level2">
-<h2></h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># create new variable with consistent alphabetical order</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a>cces_dmas<span class="op">$</span>dma_ord &lt;-<span class="st"> </span><span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBIA (MO) - JEFFERSON CITY (MO)&quot;</span>, <span class="st">&quot;COLUMBIA2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBIA (SC)&quot;</span>, <span class="st">&quot;COLUMBIA1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBUS (MS) - TUPELO(MS) - WEST POINT (MS)&quot;</span>, <span class="st">&quot;COLUMBUS3&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;COLUMBUS (OH)&quot;</span>, <span class="st">&quot;COLUMBUS2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;PORTLAND (ME) - AUBURN (ME)&quot;</span>, <span class="st">&quot;PORTLAND2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;PORTLAND (OR)&quot;</span>, <span class="st">&quot;PORTLAND1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;SPRINGFIELD (MA) - HOLYOKE (MA)&quot;</span>, <span class="st">&quot;SPRINGFIELD2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;SPRINGFIELD (MO)&quot;</span>, <span class="st">&quot;SPRINGFIELD1&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;WICHITA (KS) - HUTCHINSON (KS)&quot;</span>, <span class="st">&quot;WICHITA2&quot;</span>, <span class="kw">ifelse</span>(cces_dmas<span class="op">$</span>DMA <span class="op">==</span><span class="st"> &quot;WICHITA FALLS (TX) - LAWTON (OK)&quot;</span>, <span class="st">&quot;WICHITA1&quot;</span>, cces_dmas<span class="op">$</span>DMA))))))))))</span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># rearrange cces_dmas in alphabetical order by DMA</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a>cces_dmas &lt;-<span class="st"> </span>cces_dmas[<span class="kw">order</span>(cces_dmas<span class="op">$</span>dma_ord),]</span>
-<span id="cb8-5"><a href="#cb8-5"></a><span class="co"># create alphabetical rank variable</span></span>
-<span id="cb8-6"><a href="#cb8-6"></a>cces_dmas<span class="op">$</span>alphabetical &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(cces_dmas))</span>
-<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># create vector of first three letters of each included DMA</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>included &lt;-<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">substr</span>(cces_dmas<span class="op">$</span>DMA, <span class="dv">1</span>, <span class="dv">3</span>))</span>
-<span id="cb8-9"><a href="#cb8-9"></a><span class="co"># remove any DMAs not included in CCES dataset - take first 3 letters and cut if they don&#39;t match</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>region_averages<span class="op">$</span>region_first3 &lt;-<span class="st"> </span><span class="kw">toupper</span>(<span class="kw">substr</span>(region_averages<span class="op">$</span>region, <span class="dv">1</span>, <span class="dv">3</span>))</span>
-<span id="cb8-11"><a href="#cb8-11"></a>region_averages &lt;-<span class="st"> </span><span class="kw">subset</span>(region_averages, region_averages<span class="op">$</span>region_first3 <span class="op">%in%</span><span class="st"> </span>included)</span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co"># rearrange region_averages in alphabetical order by DMA</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a>region_averages &lt;-<span class="st"> </span>region_averages[<span class="kw">order</span>(region_averages<span class="op">$</span>region),]</span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="co"># create alphabetical rank variable</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a>region_averages<span class="op">$</span>alphabetical &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">rownames</span>(region_averages))</span>
-<span id="cb8-16"><a href="#cb8-16"></a><span class="co"># merge datasets on alphabetical variable</span></span>
-<span id="cb8-17"><a href="#cb8-17"></a>cces_dmas_whm &lt;-<span class="st"> </span><span class="kw">merge</span>(cces_dmas, region_averages, <span class="dt">by =</span> <span class="st">&quot;alphabetical&quot;</span>)</span></code></pre></div>
 </section></section>
 <section><section id="results" class="title-slide slide level1"><h1>Results</h1></section><section id="univariate-plots" class="slide level2">
 <h2>Univariate plots</h2>
 <p>Tools: ggplot2 and ggsave</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># plot white history month search volume</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distribution of search volumes for </span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st">&quot;</span>)  <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st"> search volume by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm.png&quot;</span>)</span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># plot anger that racism exists</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed anger, 0 (most angry)-1 (least angry)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="kw">ggsave</span>(<span class="st">&quot;anger.png&quot;</span>)</span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co"># plot awareness of racial advantage</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief in racial advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in advantage, 0 (most)-1 (least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="kw">ggsave</span>(<span class="st">&quot;advantage.png&quot;</span>)</span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># plot fear of other races</span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed fear, 0 (least fear)-1 (most fear)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-12"><a href="#cb9-12"></a><span class="kw">ggsave</span>(<span class="st">&quot;fear.png&quot;</span>)</span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="co"># plot belief that racism only occurs in isolated incidents</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief that racial incidents are isolated situations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Agreement, 0 (disagree)-1 (agree)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;isolated.png&quot;</span>)</span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co"># plot racial conservatism</span></span>
-<span id="cb9-17"><a href="#cb9-17"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average racial conservatism score by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Least to most conservative&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
-<span id="cb9-18"><a href="#cb9-18"></a><span class="kw">ggsave</span>(<span class="st">&quot;rc.png&quot;</span>)</span></code></pre></div>
-</section><section id="section-5" class="slide level2">
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># plot white history month search volume</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.3</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Distribution of search volumes for </span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st">&quot;</span>)  <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;</span><span class="ch">\&quot;</span><span class="st">White History Month</span><span class="ch">\&quot;</span><span class="st"> search volume by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm.png&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="co"># plot anger that racism exists</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed anger, 0 (most angry)-1 (least angry)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="kw">ggsave</span>(<span class="st">&quot;anger.png&quot;</span>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="co"># plot awareness of racial advantage</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief in racial advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in advantage, 0 (most)-1 (least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="kw">ggsave</span>(<span class="st">&quot;advantage.png&quot;</span>)</span>
+<span id="cb8-10"><a href="#cb8-10"></a><span class="co"># plot fear of other races</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Expressed fear, 0 (least fear)-1 (most fear)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="kw">ggsave</span>(<span class="st">&quot;fear.png&quot;</span>)</span>
+<span id="cb8-13"><a href="#cb8-13"></a><span class="co"># plot belief that racism only occurs in isolated incidents</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average belief that racial incidents are isolated situations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Agreement, 0 (disagree)-1 (agree)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-15"><a href="#cb8-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;isolated.png&quot;</span>)</span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="co"># plot racial conservatism</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth =</span> <span class="fl">0.02</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Average racial conservatism score by DMA&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Least to most conservative&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;Number of DMAs&quot;</span>)</span>
+<span id="cb8-18"><a href="#cb8-18"></a><span class="kw">ggsave</span>(<span class="st">&quot;rc.png&quot;</span>)</span></code></pre></div>
+</section><section id="section-2" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm.png"></h2>
-</section><section id="section-6" class="slide level2">
+</section><section id="section-3" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/advantage.png"></h2>
-</section><section id="section-7" class="slide level2">
+</section><section id="section-4" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/anger.png"></h2>
-</section><section id="section-8" class="slide level2">
+</section><section id="section-5" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/fear.png"></h2>
-</section><section id="section-9" class="slide level2">
+</section><section id="section-6" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/isolated.png"></h2>
-</section><section id="section-10" class="slide level2">
+</section><section id="section-7" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/rc.png"></h2>
 </section><section id="bivariate-results" class="slide level2">
 <h2>Bivariate results</h2>
@@ -756,47 +738,51 @@ document.getElementsByTagName('head')[0].appendChild(style);
 <li>Regression analysis used to examine relationship between search volumes for White History Month and traditional polling measures of racial conservatism</li>
 <li>Tool: stargazer package</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/cces_dmas_whm.csv&quot;</span>)</span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="co"># regression analysis - anger</span></span>
-<span id="cb10-3"><a href="#cb10-3"></a>anger &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_anger, <span class="dt">data =</span> data)</span>
-<span id="cb10-4"><a href="#cb10-4"></a><span class="co"># regression analysis - fear</span></span>
-<span id="cb10-5"><a href="#cb10-5"></a>fear &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_fear, <span class="dt">data =</span> data)</span>
-<span id="cb10-6"><a href="#cb10-6"></a><span class="co"># regression analysis - belief that racial incidents are isolated</span></span>
-<span id="cb10-7"><a href="#cb10-7"></a>isolated &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_isolated, <span class="dt">data =</span> data)</span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="co"># regression analysis - belief in white racial advantage</span></span>
-<span id="cb10-9"><a href="#cb10-9"></a>advantage &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_advantage, <span class="dt">data =</span> data)</span>
-<span id="cb10-10"><a href="#cb10-10"></a><span class="co"># regression analysis - racial conservatism</span></span>
-<span id="cb10-11"><a href="#cb10-11"></a>racial_conservatism &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_rc, <span class="dt">data =</span> data)</span>
-<span id="cb10-12"><a href="#cb10-12"></a><span class="kw">stargazer</span>(anger, fear, isolated, advantage, racial_conservatism, <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">out =</span> <span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Results/models.html&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>data &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Data/cces_dmas_whm.csv&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co"># regression analysis - anger</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>anger &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_anger, <span class="dt">data =</span> data)</span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># regression analysis - fear</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>fear &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_fear, <span class="dt">data =</span> data)</span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co"># regression analysis - belief that racial incidents are isolated</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>isolated &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_isolated, <span class="dt">data =</span> data)</span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co"># regression analysis - belief in white racial advantage</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>advantage &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_advantage, <span class="dt">data =</span> data)</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co"># regression analysis - racial conservatism</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a>racial_conservatism &lt;-<span class="st"> </span><span class="kw">lm</span>(whm_estimate <span class="op">~</span><span class="st"> </span>dmamean_rc, <span class="dt">data =</span> data)</span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="kw">stargazer</span>(anger, fear, isolated, advantage, racial_conservatism, <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>, <span class="dt">out =</span> <span class="st">&quot;~/Desktop/239T_materials/ps239T-final-project/Results/models.html&quot;</span>)</span></code></pre></div>
 </section><section id="regression-models" class="slide level2">
 <h2>Regression models</h2>
 <p><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/models.png" height="600"></p>
 </section><section id="regression-plots" class="slide level2">
 <h2>Regression plots</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co"># white history month search frequency and anger that racism exists</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Anger at racism (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
-<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_anger.png&quot;</span>)</span>
-<span id="cb11-4"><a href="#cb11-4"></a><span class="co"># white history month search frequency and belief in racial advantage</span></span>
-<span id="cb11-5"><a href="#cb11-5"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief in white advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in white advantage (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
-<span id="cb11-6"><a href="#cb11-6"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_advantage.png&quot;</span>)</span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="co"># white history month search frequency and fear of other races</span></span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_fear.png&quot;</span>)</span>
-<span id="cb11-10"><a href="#cb11-10"></a><span class="co"># white history month search frequency and belief that racial incidents are isolated</span></span>
-<span id="cb11-11"><a href="#cb11-11"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief that racial incidents are isolated&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in incident isolation&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
-<span id="cb11-12"><a href="#cb11-12"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_isolated.png&quot;</span>)</span>
-<span id="cb11-13"><a href="#cb11-13"></a><span class="co"># white history month search frequency and racial conservatism</span></span>
-<span id="cb11-14"><a href="#cb11-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
-<span id="cb11-15"><a href="#cb11-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_rc.png&quot;</span>)</span></code></pre></div>
-</section><section id="section-11" class="slide level2">
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># white history month search volume and anger that racism exists</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_anger, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and anger that racism exists&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Anger at racism (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_anger.png&quot;</span>)</span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># white history month search volume and belief in racial advantage</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_advantage, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief in white advantage&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in white advantage (most to least)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_advantage.png&quot;</span>)</span>
+<span id="cb10-8"><a href="#cb10-8"></a></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="co"># white history month search volume and fear of other races</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_fear, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and fear of other races&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Fear of other races (least to most)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_fear.png&quot;</span>)</span>
+<span id="cb10-12"><a href="#cb10-12"></a></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="co"># white history month search volume and belief that racial incidents are isolated</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_isolated, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and belief that racial incidents are isolated&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Belief in incident isolation (least to most)&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_isolated.png&quot;</span>)</span>
+<span id="cb10-16"><a href="#cb10-16"></a></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co"># white history month search volume and racial conservatism</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> dmamean_rc, <span class="dt">y =</span> whm_estimate)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> lm) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;White History Month search volume and racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlab</span>(<span class="st">&quot;Racial conservatism&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&quot;White History Month search volume&quot;</span>)</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="kw">ggsave</span>(<span class="st">&quot;whm_rc.png&quot;</span>)</span></code></pre></div>
+</section><section id="section-8" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm_advantage.png"></h2>
-</section><section id="section-12" class="slide level2">
+</section><section id="section-9" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm_anger.png"></h2>
-</section><section id="section-13" class="slide level2">
+</section><section id="section-10" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm_fear.png"></h2>
-</section><section id="section-14" class="slide level2">
+</section><section id="section-11" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm_isolated.png"></h2>
-</section><section id="section-15" class="slide level2">
+</section><section id="section-12" class="slide level2">
 <h2><img src="/Users/anna/Desktop/239T_materials/ps239T-final-project/Results/whm_rc.png"></h2>
 </section></section>
 <section id="next-steps" class="title-slide slide level1"><h1>Next steps</h1><ul>

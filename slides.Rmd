@@ -22,6 +22,23 @@ output:
  - i.e., the popularity of searches for "white history month" relative to all other terms searched in the region
  - Measure taken at the Nielson Designated Market Area (DMA) level (210 DMAs representing the entire country)
 
+## Challenge: Low search volumes don't show up on Google Trends
+ <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm.png">
+ 
+## Solution(?): Use regression to estimate search volumes
+
+1. Eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
+
+2. Create two datasets of average scores for each region with complete data and all regions, including incompletes
+
+3. Regress "white history month" average score on "weather" average score and "white history month + weather" average score for markets that never score a 0 or 100 on "white history month"
+
+4. Use coefficients from regression to back out "white history month" for remaining markets, using their average search volume for "weather" and "white history month + weather"
+
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/weather.png">
+
+## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm_weather.png">
+
 
 ## Biggest challenge: No official Google Trends API
  - Secondary challenge: unofficial APIs in R do not allow searches for "x OR y", only "x AND y"
@@ -59,25 +76,7 @@ for i in range(100):
     # wait 1 second before next query
     time.sleep(1)
  ```
-
-## Challenge 2: Low search volumes don't show up on Google Trends
- <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm.png">
- 
-## Solution(?): Use regression to estimate search volumes
-
-1. Eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
-
-2. Create datasets of average scores for each region with complete data and all regions, including incompletes
-
-3. Regress "white history month" average score on "weather" average score and "white history month + weather" average score for markets that never score a 0 or 100 on "white history month"
-
-4. Use coefficients from regression to back out "white history month" for remaining markets, using their average search volume for "weather" and "white history month + weather"
-
-## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/weather.png">
-
-## <img src="~/Desktop/239T_materials/ps239T-final-project/Data/whm_weather.png">
-
-##
+## Backing out search volumes
  ```{r, eval = FALSE}
  # eliminate any media market that ever scores 0 or 100 for "weather" or "white history month"
 cuts <- subset(gdata$region, gdata$weather == 100 | gdata$weather == 0 
@@ -171,11 +170,10 @@ cces %<>%
   dplyr::mutate(racial_conservatism = rowMeans(select(., c(anger, advantage, fear, isolated
   ))))
 ```
-## Challenge 3: Search volumes are at DMA level; CCES items are at county level
-
-Solution: Use a crosswalk dataset
+## Challenge: Different levels of measurement
+ - Search volumes at DMA level; CCES items at county level
+ - Solution: Use a crosswalk dataset
   
-##
 ```{r, eval = FALSE}
 # load county fips-DMA dataset and assign to dataframe "rosetta"
 load("~/Desktop/239T_materials/ps239T-final-project/Data/county_dma.RData")
@@ -196,30 +194,9 @@ cces_dmas <- select(cces_dmas, c(DMA, dmamean_anger, dmamean_advantage, dmamean_
 cces_dmas <- unique(cces_dmas)
 ```
 
-## Challenge 4: Merging on DMA
+## Challenge: Merging on DMA
  - The DMAs were notated differently across datasets, with some duplicates in the CCES data and one missing from the Google data.
- - Solution: Re-order CCCES dataset and merge on alphabetized rank (maybe should have used a fuzzy merge instead - this was messy.)
-
-##
-```{r, eval = FALSE}
-# create new variable with consistent alphabetical order
-cces_dmas$dma_ord <- ifelse(cces_dmas$DMA == "COLUMBIA (MO) - JEFFERSON CITY (MO)", "COLUMBIA2", ifelse(cces_dmas$DMA == "COLUMBIA (SC)", "COLUMBIA1", ifelse(cces_dmas$DMA == "COLUMBUS (MS) - TUPELO(MS) - WEST POINT (MS)", "COLUMBUS3", ifelse(cces_dmas$DMA == "COLUMBUS (OH)", "COLUMBUS2", ifelse(cces_dmas$DMA == "PORTLAND (ME) - AUBURN (ME)", "PORTLAND2", ifelse(cces_dmas$DMA == "PORTLAND (OR)", "PORTLAND1", ifelse(cces_dmas$DMA == "SPRINGFIELD (MA) - HOLYOKE (MA)", "SPRINGFIELD2", ifelse(cces_dmas$DMA == "SPRINGFIELD (MO)", "SPRINGFIELD1", ifelse(cces_dmas$DMA == "WICHITA (KS) - HUTCHINSON (KS)", "WICHITA2", ifelse(cces_dmas$DMA == "WICHITA FALLS (TX) - LAWTON (OK)", "WICHITA1", cces_dmas$DMA))))))))))
-# rearrange cces_dmas in alphabetical order by DMA
-cces_dmas <- cces_dmas[order(cces_dmas$dma_ord),]
-# create alphabetical rank variable
-cces_dmas$alphabetical <- as.numeric(rownames(cces_dmas))
-# create vector of first three letters of each included DMA
-included <- toupper(substr(cces_dmas$DMA, 1, 3))
-# remove any DMAs not included in CCES dataset - take first 3 letters and cut if they don't match
-region_averages$region_first3 <- toupper(substr(region_averages$region, 1, 3))
-region_averages <- subset(region_averages, region_averages$region_first3 %in% included)
-# rearrange region_averages in alphabetical order by DMA
-region_averages <- region_averages[order(region_averages$region),]
-# create alphabetical rank variable
-region_averages$alphabetical <- as.numeric(rownames(region_averages))
-# merge datasets on alphabetical variable
-cces_dmas_whm <- merge(cces_dmas, region_averages, by = "alphabetical")
-```
+ - Solution: Re-order CCES dataset and merge on alphabetized rank (probably should have used a fuzzy merge instead - this was messy, and I'm not showing the code because it is not at all clever.)
 
 # Results
  
@@ -275,19 +252,23 @@ stargazer(anger, fear, isolated, advantage, racial_conservatism, type = "html", 
  
 ## Regression plots
 ```{r, eval = FALSE}
-# white history month search frequency and anger that racism exists
+# white history month search volume and anger that racism exists
 ggplot(data, aes(x = dmamean_anger, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and anger that racism exists") + xlab("Anger at racism (most to least)") + ylab("White History Month search volume")
 ggsave("whm_anger.png")
-# white history month search frequency and belief in racial advantage
+
+# white history month search volume and belief in racial advantage
 ggplot(data, aes(x = dmamean_advantage, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and belief in white advantage") + xlab("Belief in white advantage (most to least)") + ylab("White History Month search volume")
 ggsave("whm_advantage.png")
-# white history month search frequency and fear of other races
-ggplot(data, aes(x = dmamean_fear, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and fear of other races") + xlab("Fear of other races") + ylab("White History Month search volume")
+
+# white history month search volume and fear of other races
+ggplot(data, aes(x = dmamean_fear, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and fear of other races") + xlab("Fear of other races (least to most)") + ylab("White History Month search volume")
 ggsave("whm_fear.png")
-# white history month search frequency and belief that racial incidents are isolated
-ggplot(data, aes(x = dmamean_isolated, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and belief that racial incidents are isolated") + xlab("Belief in incident isolation") + ylab("White History Month search volume")
+
+# white history month search volume and belief that racial incidents are isolated
+ggplot(data, aes(x = dmamean_isolated, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and belief that racial incidents are isolated") + xlab("Belief in incident isolation (least to most)") + ylab("White History Month search volume")
 ggsave("whm_isolated.png")
-# white history month search frequency and racial conservatism
+
+# white history month search volume and racial conservatism
 ggplot(data, aes(x = dmamean_rc, y = whm_estimate)) + geom_point() + geom_smooth(method = lm) + ggtitle("White History Month search volume and racial conservatism") + xlab("Racial conservatism") + ylab("White History Month search volume")
 ggsave("whm_rc.png")
 ```
