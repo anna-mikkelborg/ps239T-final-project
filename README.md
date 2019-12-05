@@ -14,7 +14,7 @@ In order to explore the relationship between interest in a "White History Month"
 #### /
 
 1. slides.Rmd: code for slides.
-2. slides_files: material for using reveal.js to create slides.
+2. slides_files/reveal.js-3.3.0.1: material for using reveal.js to create slides.
 3. slide.html: slides for in-class presentation.
 4. README.md: this document.
 
